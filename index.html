@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<link
+			rel="stylesheet"
+			href="styles.css" />
+		<meta charset="UTF-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1.0" />
+		<title>암수 체커</title>
+	</head>
+	<body>
+		<h1>암수 체커</h1>
+		<div>
+			<label for="party-size">파티원 수: </label>
+			<input
+				type="number"
+				id="party-size"
+				min="1"
+				max="8"
+				value="4" />
+			<button onclick="initialize()">시작</button>
+		</div>
+		<div id="party-status"></div>
+
+		<script>
+			let partySize = 0;
+			let grenades = [];
+			let cooldowns = [];
+			let currentTurn = 0;
+
+			function initialize() {
+				partySize = document.getElementById("party-size").value;
+				grenades = Array.from({ length: partySize }, () => 3);
+				cooldowns = Array.from({ length: partySize }, () => 0);
+				currentTurn = 0;
+
+				updateUI();
+			}
+
+			function updateUI() {
+				const partyStatus = document.getElementById("party-status");
+				partyStatus.innerHTML = "";
+				grenades.forEach((count, index) => {
+					const status = cooldowns[index] > 0 ? `<span class="cooldown">쿨타임: ${cooldowns[index]}초</span>` : `<span class="available">사용 가능</span>`;
+					partyStatus.innerHTML += `
+          <div class="member">
+            파티원 ${index + 1}: 수류탄 ${count}개 | ${status}
+            <button ${cooldowns[index] > 0 || count === 0 ? "disabled" : ""} 
+              onclick="useGrenade(${index})">사용</button>
+          </div>
+        `;
+				});
+			}
+
+			function useGrenade(index) {
+				if (grenades[index] > 0 && cooldowns[index] === 0) {
+					grenades[index]--;
+					cooldowns[index] = 30;
+					setTimeout(() => {
+						cooldowns[index] = 0;
+						updateUI();
+					}, 30000);
+					if (index === currentTurn) {
+						currentTurn = (currentTurn + 1) % partySize;
+					}
+					updateUI();
+				}
+			}
+
+			setInterval(() => {
+				cooldowns = cooldowns.map((cooldown) => (cooldown > 0 ? cooldown - 1 : 0));
+				updateUI();
+			}, 1000);
+		</script>
+	</body>
+</html>

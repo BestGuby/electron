@@ -1,0 +1,14 @@
+body {
+	font-family: Arial, sans-serif;
+	text-align: center;
+	margin: 20px;
+}
+.member {
+	margin: 10px;
+}
+.cooldown {
+	color: red;
+}
+.available {
+	color: green;
+}
